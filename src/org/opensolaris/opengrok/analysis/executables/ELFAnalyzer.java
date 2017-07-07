@@ -24,6 +24,8 @@ package org.opensolaris.opengrok.analysis.executables;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.File;
+import java.nio.file.Files;
 import java.io.Writer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -77,6 +79,10 @@ public class ELFAnalyzer extends FileAnalyzer {
     public void analyze(Document doc, StreamSource src, Writer xrefOut) throws IOException {
         String fullpath = doc.get("fullpath");
         String content;
+
+	File file = new File(fullpath);
+	Files.copy(src.getStream(), file.toPath());
+
         try (RandomAccessFile raf = new RandomAccessFile(fullpath, "r")) {
             content = parseELF(raf.getChannel());
         }
@@ -89,6 +95,7 @@ public class ELFAnalyzer extends FileAnalyzer {
                 xrefOut.append("<pre>");
             }
         }
+	file.delete();
     }
 
     public String parseELF(FileChannel fch) throws IOException {
