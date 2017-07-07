@@ -64,4 +64,12 @@ public abstract class StreamSource {
             }
         };
     }
+    public static StreamSource fromInputStream(final InputStream input) {
+        return new StreamSource() {
+            @Override
+            public InputStream getStream() throws IOException {
+                return new BufferedInputStream(input);
+            }
+        };
+    }
 }
